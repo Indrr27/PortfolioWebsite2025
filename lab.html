@@ -1,0 +1,298 @@
+<!-- lab.html - Optimized -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inder's Website - Lab</title>
+  
+  
+  <style>
+    /* Critical Reset & Layout */
+    html, body {
+      margin: 0; 
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      height: 100%;
+    }
+
+    /* Critical Font */
+    @font-face {
+      font-family: 'Pixelpurl';
+      src: 
+        url('/fonts/Pixelpurl-0vBPP.woff2') format('woff2'),
+        url('/fonts/Pixelpurl-0vBPP.woff')  format('woff'),
+        url('/fonts/Pixelpurl-0vBPP.ttf')   format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Critical Container */
+    #container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* Critical Frame Layout */
+    #frame-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #frame-back img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Critical Title */
+    #lab-title {
+      position: absolute;
+      top: 2vh;
+      left: 50%;
+      width: clamp(280px, 35vw, 600px);
+      height: auto;
+      transform: translateX(-50%);
+      image-rendering: pixelated;
+      z-index: 4;
+    }
+
+    /* Critical View */
+    #lab-view {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      width: clamp(240px, 70vw, 1000px);
+      aspect-ratio: 320 / 176;
+      transform: translate(-50%, -50%);
+      image-rendering: pixelated;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    #lab-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* Critical Floor */
+    #frame-floor {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 6;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    #frame-floor img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Critical Hidden State */
+    .hidden {
+      display: none;
+    }
+
+    /* Loading States */
+    img {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    img.loaded {
+      opacity: 1;
+    }
+
+    /* Critical Mobile Landscape */
+    @media screen and (max-height: 500px) and (orientation: landscape) {
+      #lab-title {
+        top: 0.5vh !important;
+        width: clamp(120px, 25vw, 280px) !important;
+        animation: none !important;
+      }
+      #lab-view {
+        top: 45% !important;
+        width: clamp(180px, 55vw, 550px) !important;
+      }
+    }
+  </style>
+
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Preload all walk-cycle GIFs at high priority -->
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/martywalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/materwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/teinwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/lobbiewalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+</head>
+<body data-room="lab">
+  <div id="container">
+    <div id="frame-back">
+      <img 
+        src="sprites/frame/labframe/labframeback.webp" 
+        alt="Backdrop frame"
+        width="1920"
+        height="1080"
+        onload="this.classList.add('loaded')"
+      />
+      <div class="overlay"></div>
+    </div>
+    <img 
+      id="lab-title" 
+      src="sprites/titles/labtitle.webp" 
+      alt="Lab Title"
+      width="600"
+      height="120"
+      onload="this.classList.add('loaded')"
+    />
+    <div id="lab-view">
+      <img 
+        id="lab-scene" 
+        src="sprites/Webpages/lab.webp" 
+        alt="Lab scene"
+        width="320"
+        height="176"
+        onload="this.classList.add('loaded')"
+      />
+      <!-- Character with high-priority fetch -->
+      <img
+        id="tein"
+        src="gif/characters/teinwalk.gif"
+        alt="Tein walking"
+        width="64"
+        height="64"
+        fetchpriority="high"
+        decoding="async"
+        onload="this.classList.add('loaded')"
+      />
+      <img
+        id="terminal1"
+        class="lab-object"
+        src="sprites/objects/labobjects/terminal1.webp"
+        alt="Terminal 1"
+        width="92"
+        height="52"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+      <img
+        id="terminal2"
+        class="lab-object"
+        src="sprites/objects/labobjects/terminal2.webp"
+        alt="Terminal 2"
+        width="77"
+        height="48"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+    </div>
+    <div id="frame-floor">
+      <img 
+        src="sprites/frame/labframe/labframefloor.webp" 
+        alt="Floor frame"
+        width="1920"
+        height="130"
+        onload="this.classList.add('loaded')"
+      />
+      <div id="controls">
+        <button id="help" aria-label="Help">
+          <img
+            src="sprites/buttons/labbuttons/labbuttonshelp.webp"
+            alt="Help button"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="left" aria-label="Previous room">
+          <img
+            src="sprites/buttons/labbuttons/labbuttonsleft.webp"
+            alt="Go left"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="right" aria-label="Next room">
+          <img
+            src="sprites/buttons/labbuttons/labbuttonsright.webp"
+            alt="Go right"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="volume" aria-label="Toggle sound">
+          <img
+            src="sprites/buttons/labbuttons/labbuttonsvol.webp"
+            alt="Volume control"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+      </div>
+    </div>
+    <div id="dialogue" class="hidden">
+      <div id="dialogue-text"></div>
+      <div id="dialogue-buttons"></div>
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="bgm" src="sound/bgm.mp3" preload="metadata" loop></audio>
+  <audio id="tein1" src="sound/tein/tein1.mp3" preload="metadata"></audio>
+  <audio id="tein2" src="sound/tein/tein2.mp3" preload="metadata"></audio>
+  <audio id="tein3" src="sound/tein/tein3.mp3" preload="metadata"></audio>
+  <audio id="bob1" src="sound/bob/bob1.mp3" preload="metadata"></audio>
+  <audio id="bob2" src="sound/bob/bob2.mp3" preload="metadata"></audio>
+  <audio id="bob3" src="sound/bob/bob3.mp3" preload="metadata"></audio>
+  <audio id="glass" src="sound/glass.mp3" preload="metadata"></audio>
+
+  <!-- Scripts -->
+  <script src="scripts/common.js"></script>
+  <script src="scripts/lab.js"></script>
+</body>
+</html>

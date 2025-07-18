@@ -1,0 +1,122 @@
+# netlify.toml - Place in your root directory
+[build]
+  publish = "."
+  command = "echo 'Static site - no build needed'"
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = false
+  minify = true
+
+[build.processing.js]
+  bundle = false
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = false  # Keep false for pixel art!
+
+# Redirects for SPA-like behavior (if needed)
+[[redirects]]
+  from = "/classroom"
+  to = "/classroom.html"
+  status = 200
+
+[[redirects]]
+  from = "/lab"
+  to = "/lab.html"
+  status = 200
+
+[[redirects]]
+  from = "/office"
+  to = "/office.html"
+  status = 200
+
+[[redirects]]
+  from = "/comms"
+  to = "/comms.html"
+  status = 200
+
+# Performance Headers
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.ttf"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.gif"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+
+# Preload headers for critical assets
+[[headers]]
+  for = "/"
+  [headers.values]
+    Link = '''</fonts/Pixelpurl-0vBPP.woff2>; rel=preload; as=font; type=font/woff2; crossorigin,
+              </gif/bg.gif>; rel=preload; as=image'''
+
+[[headers]]
+  for = "/classroom.html"
+  [headers.values]
+    Link = '''</gif/characters/martywalk.gif>; rel=preload; as=image,
+              </sprites/Webpages/classroom.webp>; rel=preload; as=image'''
+
+[[headers]]
+  for = "/lab.html"
+  [headers.values]
+    Link = '''</gif/characters/teinwalk.gif>; rel=preload; as=image,
+              </sprites/Webpages/lab.webp>; rel=preload; as=image'''
+
+[[headers]]
+  for = "/office.html"
+  [headers.values]
+    Link = '''</gif/characters/lobbiewalk.gif>; rel=preload; as=image,
+              </sprites/Webpages/fileroom.webp>; rel=preload; as=image'''
+
+[[headers]]
+  for = "/comms.html"
+  [headers.values]
+    Link = '''</gif/characters/materwalk.gif>; rel=preload; as=image,
+              </sprites/Webpages/comms.webp>; rel=preload; as=image'''

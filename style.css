@@ -1,0 +1,1598 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL STYLES & RESET
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Reset & Full-screen Setup */
+html, body {
+  margin: 0; 
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  height: 100%;
+}
+
+/* Custom Font */
+@font-face {
+  font-family: 'Pixelpurl';
+  src: 
+    /* preferred modern format */
+    url('/fonts/Pixelpurl-0vBPP.woff2') format('woff2'),
+    /* wide support */
+    url('/fonts/Pixelpurl-0vBPP.woff')  format('woff'),
+    /* last-resort fallback */
+    url('/fonts/Pixelpurl-0vBPP.ttf')   format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* improves perceived load performance */
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHARED ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Title Animations */
+@keyframes titleFloat {
+  0%, 100% { 
+    transform: translateX(-50%) translateY(0px); 
+  }
+  50% { 
+    transform: translateX(-50%) translateY(-8px); 
+  }
+}
+
+@keyframes titleGlow {
+  0% { 
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6)) brightness(1); 
+  }
+  100% { 
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.9)) brightness(1.1); 
+  }
+}
+
+/* Button Animation */
+@keyframes jiggle {
+  0%   { transform: scale(1.1) rotate(0deg); }
+  25%  { transform: scale(1.1) rotate(-4deg); }
+  50%  { transform: scale(1.1) rotate(4deg); }
+  75%  { transform: scale(1.1) rotate(-2deg); }
+  100% { transform: scale(1.1) rotate(0deg); }
+}
+
+/* Walk Animation */
+@keyframes walkAnim {
+  from { background-position: 0 0; }
+  to { background-position: -384px 0; }
+}
+
+/* Book Jiggle Animation */
+@keyframes book-jiggle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CLASSROOM ROOM STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Full-screen Container Override */
+body[data-room="classroom"] #container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Classroom Layout Layers
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Back Frame Layer */
+body[data-room="classroom"] #frame-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body[data-room="classroom"] #frame-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body[data-room="classroom"] #frame-back .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Classroom Title */
+body[data-room="classroom"] #classroom-title {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  width: clamp(280px, 35vw, 600px);
+  height: auto;
+  transform: translateX(-50%);
+  image-rendering: pixelated;
+  z-index: 4;
+  animation: titleFloat 3s ease-in-out infinite, titleGlow 2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+/* Classroom View Window */
+body[data-room="classroom"] #classroom-view {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  width: clamp(240px, 70vw, 1000px);
+  aspect-ratio: 320 / 176;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  overflow: hidden;
+  z-index: 2;
+}
+
+body[data-room="classroom"] #classroom-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Floor Frame Layer */
+body[data-room="classroom"] #frame-floor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+body[data-room="classroom"] #frame-floor img {
+  width: 100%;
+  height: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Classroom Characters
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Marty Character */
+body[data-room="classroom"] #marty {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: clamp(68px, 23vw, 336px);
+  height: auto;
+  image-rendering: pixelated;
+  animation: walkAnim 0.7s steps(6) infinite;
+  transform: scaleX(-1);
+  transform-origin: center center;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Marty Container (created by JS) */
+#marty-container {
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  padding: 20px;
+  transform-origin: center bottom;
+  z-index: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Classroom Controls
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="classroom"] #controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 7;
+  pointer-events: none;
+}
+
+body[data-room="classroom"] #controls button {
+  pointer-events: auto;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  appearance: none;
+  outline: none;
+  width: clamp(64px, 20vw, 160px);
+  aspect-ratio: 1 / 1;
+  transition: transform 0.2s ease;
+  z-index: 8;
+}
+
+body[data-room="classroom"] #controls button img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+body[data-room="classroom"] #controls button:hover:not(:active) {
+  transform: scale(1.1);
+  animation: jiggle 0.5s ease-in-out;
+}
+
+body[data-room="classroom"] #controls button:active {
+  animation: none;
+  transform: translateY(4px) scale(0.95) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Classroom Dialogue
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="classroom"] #dialogue {
+  position: absolute;
+  bottom: calc((100vw * 130 / 1920) + 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.75);
+  border: 2px solid #4B0082;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 2em;
+  line-height: 1.3;
+  color: #fff;
+  z-index: 100;
+}
+
+body[data-room="classroom"] #dialogue-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+body[data-room="classroom"] #dialogue-buttons button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px 12px !important;
+  min-width: 120px;
+  min-height: 48px;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 1.2em !important;
+  background: #C71585 !important;
+  border: 2px solid #4B0082 !important;
+  color: #fff !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+
+body[data-room="classroom"] #dialogue-buttons button:first-child {
+  margin-left: 0;
+}
+
+body[data-room="classroom"] #dialogue-buttons button:last-child {
+  margin-right: 0;
+}
+
+body[data-room="classroom"] #dialogue-buttons button:hover {
+  background: #FF33A8 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Classroom Interactive Objects
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="classroom"] .classroom-object {
+  position: absolute;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* Bookshelf */
+body[data-room="classroom"] #bookshelf {
+  left: 0%;
+  top: 32.95%;
+  width: 19.375%;
+  height: auto;
+}
+
+/* Drawer */
+body[data-room="classroom"] #drawer {
+  left: 80%;
+  top: 60.80%;
+  width: 20%;
+  height: auto;
+}
+
+/* Object Hover Effect */
+body[data-room="classroom"] .classroom-object:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Object Close-up Overlay
+   ─────────────────────────────────────────────────────────────────────────── */
+
+#object-close-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+
+#object-close-container .closeup-object {
+  position: absolute;
+  pointer-events: auto;
+  background: rgba(255,255,255,0);
+  cursor: pointer;
+  z-index: 21;
+  animation: book-jiggle 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(255,255,150,0.6));
+  transform-origin: center;
+}
+
+#object-close-container .closeup-object:hover {
+  transform: scale(1.05) !important;
+  filter: drop-shadow(0 0 8px rgba(255,255,150,0.9)) brightness(1.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAB ROOM STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Full-screen Container Override */
+body[data-room="lab"] #container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Lab Layout Layers
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Back Frame Layer */
+body[data-room="lab"] #frame-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body[data-room="lab"] #frame-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body[data-room="lab"] #frame-back .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Lab Title */
+body[data-room="lab"] #lab-title {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  width: clamp(280px, 35vw, 600px);
+  height: auto;
+  transform: translateX(-50%);
+  image-rendering: pixelated;
+  z-index: 4;
+  animation: titleFloat 3s ease-in-out infinite, titleGlow 2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+}
+
+/* Lab View Window */
+body[data-room="lab"] #lab-view {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  width: clamp(240px, 70vw, 1000px);
+  aspect-ratio: 320 / 176;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  overflow: hidden;
+  z-index: 2;
+}
+
+body[data-room="lab"] #lab-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Floor Frame Layer */
+body[data-room="lab"] #frame-floor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+body[data-room="lab"] #frame-floor img {
+  width: 100%;
+  height: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Lab Characters
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Tein Character */
+body[data-room="lab"] #tein {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: clamp(64px, 20vw, 320px);
+  height: auto;
+  image-rendering: pixelated;
+  animation: walkAnim 0.7s steps(6) infinite;
+  transform: scaleX(-1);
+  transform-origin: center center;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Tein Container (created by JS) */
+#tein-container {
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  padding: 20px;
+  transform-origin: center bottom;
+  z-index: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Lab Controls
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="lab"] #controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 7;
+  pointer-events: none;
+}
+
+body[data-room="lab"] #controls button {
+  pointer-events: auto;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  appearance: none;
+  outline: none;
+  width: clamp(64px, 20vw, 160px);
+  aspect-ratio: 1 / 1;
+  transition: transform 0.2s ease;
+  z-index: 8;
+}
+
+body[data-room="lab"] #controls button img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+body[data-room="lab"] #controls button:hover:not(:active) {
+  transform: scale(1.1);
+  animation: jiggle 0.5s ease-in-out;
+}
+
+body[data-room="lab"] #controls button:active {
+  animation: none;
+  transform: translateY(4px) scale(0.95) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Lab Dialogue
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="lab"] #dialogue {
+  position: absolute;
+  bottom: calc((100vw * 130 / 1920) + 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.75);
+  border: 2px solid #00CED1;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 2em;
+  line-height: 1.3;
+  color: #fff;
+  z-index: 100;
+}
+
+body[data-room="lab"] #dialogue-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+body[data-room="lab"] #dialogue-buttons button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px 12px !important;
+  min-width: 120px;
+  min-height: 48px;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 1.2em !important;
+  background: #00CED1 !important;
+  border: 2px solid #008B8B !important;
+  color: #000 !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+
+body[data-room="lab"] #dialogue-buttons button:first-child {
+  margin-left: 0;
+}
+
+body[data-room="lab"] #dialogue-buttons button:last-child {
+  margin-right: 0;
+}
+
+body[data-room="lab"] #dialogue-buttons button:hover {
+  background: #48D1CC !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Lab Interactive Objects
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="lab"] .lab-object {
+  position: absolute;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+/* Terminal 1 */
+body[data-room="lab"] #terminal1 {
+  left: 2.19%;
+  top: 9.66%;
+  width: 28.75%;
+  height: auto;
+}
+
+/* Terminal 2 */
+body[data-room="lab"] #terminal2 {
+  left: 75.94%;
+  top: 7.95%;
+  width: 24.06%;
+  height: auto;
+}
+
+/* Object Hover Effect */
+body[data-room="lab"] .lab-object:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OFFICE ROOM STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Full-screen Container Override */
+body[data-room="office"] #container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Office Layout Layers
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Back Frame Layer */
+body[data-room="office"] #frame-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body[data-room="office"] #frame-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body[data-room="office"] #frame-back .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Office Title */
+body[data-room="office"] #office-title {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  width: clamp(280px, 35vw, 600px);
+  height: auto;
+  transform: translateX(-50%);
+  image-rendering: pixelated;
+  z-index: 4;
+  animation: titleFloat 3s ease-in-out infinite, titleGlow 2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(184, 134, 11, 0.6));
+}
+
+/* Office View Window */
+body[data-room="office"] #office-view {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  width: clamp(240px, 70vw, 1000px);
+  aspect-ratio: 320 / 176;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  overflow: hidden;
+  z-index: 2;
+}
+
+body[data-room="office"] #office-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Floor Frame Layer */
+body[data-room="office"] #frame-floor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+body[data-room="office"] #frame-floor img {
+  width: 100%;
+  height: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Office Characters
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Lobbie Character */
+body[data-room="office"] #lobbie {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: clamp(64px, 20vw, 320px);
+  height: auto;
+  image-rendering: pixelated;
+  animation: walkAnim 0.7s steps(6) infinite;
+  transform: scaleX(-1);
+  transform-origin: center center;
+  z-index: 1;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Lobbie Container (created by JS) */
+#lobbie-container {
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  padding: 20px;
+  transform-origin: center bottom;
+  z-index: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Office Controls
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="office"] #controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 7;
+  pointer-events: none;
+}
+
+body[data-room="office"] #controls button {
+  pointer-events: auto;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  appearance: none;
+  outline: none;
+  width: clamp(64px, 20vw, 160px);
+  aspect-ratio: 1 / 1;
+  transition: transform 0.2s ease;
+  z-index: 8;
+}
+
+body[data-room="office"] #controls button img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+body[data-room="office"] #controls button:hover:not(:active) {
+  transform: scale(1.1);
+  animation: jiggle 0.5s ease-in-out;
+}
+
+body[data-room="office"] #controls button:active {
+  animation: none;
+  transform: translateY(4px) scale(0.95) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Office Dialogue
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="office"] #dialogue {
+  position: absolute;
+  bottom: calc((100vw * 130 / 1920) + 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.75);
+  border: 2px solid #D2691E;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 2em;
+  line-height: 1.3;
+  color: #fff;
+  z-index: 100;
+}
+
+body[data-room="office"] #dialogue-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+body[data-room="office"] #dialogue-buttons button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px 12px !important;
+  min-width: 120px;
+  min-height: 48px;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 1.2em !important;
+  background: #D2691E !important;
+  border: 2px solid #8B4513 !important;
+  color: #fff !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+
+body[data-room="office"] #dialogue-buttons button:first-child {
+  margin-left: 0;
+}
+
+body[data-room="office"] #dialogue-buttons button:last-child {
+  margin-right: 0;
+}
+
+body[data-room="office"] #dialogue-buttons button:hover {
+  background: #FF8C00 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Office Interactive Objects
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="office"] .office-object {
+  position: absolute;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* Filing Cabinet */
+body[data-room="office"] #file {
+  left: 0%;
+  top: 13.64%;
+  width: 25.94%;
+  height: auto;
+}
+
+/* Paper Stack */
+body[data-room="office"] #paperstack {
+  left: 79.06%;
+  top: 76.14%;
+  width: 14.375%;
+  height: auto;
+}
+
+/* Object Hover Effect */
+body[data-room="office"] .office-object:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Filing Cabinet Close-up Overlay - Special Styles
+   ─────────────────────────────────────────────────────────────────────────── */
+
+#object-close-container .filing-cabinet-object {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 21;
+  transition: filter 0.3s ease;
+  image-rendering: pixelated;
+}
+
+#object-close-container .filing-cabinet-object:hover {
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5)) brightness(1.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMMS ROOM STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Full-screen Container Override */
+body[data-room="comms"] #container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Comms Layout Layers
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Back Frame Layer */
+body[data-room="comms"] #frame-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body[data-room="comms"] #frame-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body[data-room="comms"] #frame-back .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* Comms Title */
+body[data-room="comms"] #comms-title {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  width: clamp(280px, 35vw, 600px);
+  height: auto;
+  transform: translateX(-50%);
+  image-rendering: pixelated;
+  z-index: 4;
+  animation: titleFloat 3s ease-in-out infinite;
+}
+
+/* Comms View Window */
+body[data-room="comms"] #comms-view {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  width: clamp(240px, 70vw, 1000px);
+  aspect-ratio: 320 / 176;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  overflow: hidden;
+  z-index: 2;
+}
+
+body[data-room="comms"] #comms-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Floor Frame Layer */
+body[data-room="comms"] #frame-floor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+body[data-room="comms"] #frame-floor img {
+  width: 100%;
+  height: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Comms Characters
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Mater Character */
+body[data-room="comms"] #mater {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: clamp(80px, 25vw, 400px);
+  height: auto;
+  image-rendering: pixelated;
+  animation: walkAnim 0.7s steps(6) infinite;
+  transform: scaleX(-1);
+  transform-origin: center center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Mater Container (created by JS) */
+#mater-container {
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  padding: 20px;
+  transform-origin: center bottom;
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Comms Controls
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="comms"] #controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 7;
+  pointer-events: none;
+}
+
+body[data-room="comms"] #controls button {
+  pointer-events: auto;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  appearance: none;
+  outline: none;
+  width: clamp(64px, 20vw, 160px);
+  aspect-ratio: 1 / 1;
+  transition: transform 0.2s ease;
+  z-index: 8;
+}
+
+body[data-room="comms"] #controls button img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+body[data-room="comms"] #controls button:hover:not(:active) {
+  transform: scale(1.1);
+  animation: jiggle 0.5s ease-in-out;
+}
+
+body[data-room="comms"] #controls button:active {
+  animation: none;
+  transform: translateY(4px) scale(0.95) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Comms Dialogue
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="comms"] #dialogue {
+  position: absolute;
+  bottom: calc((100vw * 130 / 1920) + 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.75);
+  border: 2px solid #00FF7F;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 2em;
+  line-height: 1.3;
+  color: #fff;
+  z-index: 100;
+}
+
+body[data-room="comms"] #dialogue-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+body[data-room="comms"] #dialogue-buttons button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px 12px !important;
+  min-width: 120px;
+  min-height: 48px;
+  font-family: 'Pixelpurl', monospace;
+  font-size: 1.2em !important;
+  background: #00FF7F !important;
+  border: 2px solid #32CD32 !important;
+  color: #000 !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+
+body[data-room="comms"] #dialogue-buttons button:first-child {
+  margin-left: 0;
+}
+
+body[data-room="comms"] #dialogue-buttons button:last-child {
+  margin-right: 0;
+}
+
+body[data-room="comms"] #dialogue-buttons button:hover {
+  background: #7FFF00 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── 
+   Comms Interactive Objects
+   ─────────────────────────────────────────────────────────────────────────── */
+
+body[data-room="comms"] .comms-object {
+  position: absolute;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+/* Screen 1 - Direct Message Beacon (LinkedIn) */
+body[data-room="comms"] #screen1 {
+  left: 36.875%;
+  top: 32.95%;
+  width: 25.3125%;
+  height: auto;
+}
+
+/* Screen 2 - Professional Profile Archive (Email) */
+body[data-room="comms"] #screen2 {
+  left: 15%;
+  top: 21.02%;
+  width: 15.3125%;
+  height: auto;
+}
+
+/* Screen 3 - Open-Source Relic Repository (GitHub) */
+body[data-room="comms"] #screen3 {
+  left: 67.1875%;
+  top: 14.77%;
+  width: 17.8125%;
+  height: auto;
+}
+
+/* Object Hover Effect */
+body[data-room="comms"] .comms-object:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 127, 0.6));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN - LAYOUT FIXES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Update dialogue positioning to work with new layout */
+body[data-room="classroom"] #dialogue,
+body[data-room="lab"] #dialogue,
+body[data-room="office"] #dialogue,
+body[data-room="comms"] #dialogue {
+  position: absolute;
+  bottom: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.75);
+  font-family: 'Pixelpurl', monospace;
+  font-size: 2em;
+  line-height: 1.3;
+  color: #fff;
+  z-index: 100;
+}
+
+/* Large screens (1440px+) */
+@media screen and (min-width: 1440px) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 3vh;
+    width: clamp(400px, 40vw, 700px);
+  }
+  
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 52%;
+    width: clamp(400px, 75vw, 1100px);
+  }
+}
+
+/* Medium screens (1024px-1439px) */
+@media screen and (min-width: 1024px) and (max-width: 1439px) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 2.5vh;
+    width: clamp(300px, 35vw, 550px);
+  }
+  
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 53%;
+    width: clamp(300px, 70vw, 900px);
+  }
+}
+
+/* Small screens (<1024px) */
+@media screen and (max-width: 1023px) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 2vh;
+    width: clamp(250px, 40vw, 450px);
+    animation: none;
+  }
+  
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 54%;
+    width: clamp(250px, 75vw, 700px);
+  }
+}
+
+/* Tablet */
+@media screen and (max-width: 768px) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 1.5vh;
+    width: clamp(220px, 45vw, 400px);
+  }
+  
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 55%;
+    width: clamp(220px, 80vw, 600px);
+  }
+  
+  body[data-room="classroom"] #dialogue,
+  body[data-room="lab"] #dialogue,
+  body[data-room="office"] #dialogue,
+  body[data-room="comms"] #dialogue {
+    bottom: 16vh;
+    width: 90vw;
+    max-width: 500px;
+    font-size: 1.2em;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 480px) {
+  body[data-room="classroom"] #dialogue,
+  body[data-room="lab"] #dialogue,
+  body[data-room="office"] #dialogue,
+  body[data-room="comms"] #dialogue {
+    bottom: 13vh;
+    width: 95vw;
+    font-size: 0.9em;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE LANDSCAPE OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Base Mobile Landscape Rules */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  /* Titles */
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    position: absolute !important;
+    top: 0.5vh !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: clamp(120px, 25vw, 280px) !important;
+    height: auto !important;
+    animation: none !important;
+    z-index: 4 !important;
+    image-rendering: pixelated !important;
+  }
+
+  /* Viewports */
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    position: absolute !important;
+    top: 45% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: clamp(180px, 55vw, 550px) !important;
+    aspect-ratio: 320 / 176 !important;
+    overflow: hidden !important;
+    z-index: 2 !important;
+    image-rendering: pixelated !important;
+  }
+
+  /* Characters */
+  body[data-room="classroom"] #marty {
+    width: clamp(53px, 18vw, 128px) !important;
+    bottom: 0 !important;
+    left: 20% !important;
+  }
+
+  body[data-room="lab"] #tein {
+    width: clamp(48px, 15vw, 113px) !important;
+    bottom: 0 !important;
+    left: 20% !important;
+  }
+
+  body[data-room="office"] #lobbie {
+    width: clamp(48px, 15vw, 113px) !important;
+    bottom: 0 !important;
+    left: 20% !important;
+  }
+
+  body[data-room="comms"] #mater {
+    width: clamp(60px, 21vw, 143px) !important;
+    bottom: 0 !important;
+    left: 20% !important;
+  }
+
+  /* Controls */
+  body[data-room="classroom"] #controls,
+  body[data-room="lab"] #controls,
+  body[data-room="office"] #controls,
+  body[data-room="comms"] #controls {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    z-index: 7 !important;
+    pointer-events: none !important;
+  }
+
+  body[data-room="classroom"] #controls button,
+  body[data-room="lab"] #controls button,
+  body[data-room="office"] #controls button,
+  body[data-room="comms"] #controls button {
+    width: clamp(68px, 13.5vw, 98px) !important;
+    height: clamp(68px, 13.5vw, 98px) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  /* Floor Frame */
+  body[data-room="classroom"] #frame-floor,
+  body[data-room="lab"] #frame-floor,
+  body[data-room="office"] #frame-floor,
+  body[data-room="comms"] #frame-floor {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: clamp(60px, 18vh, 120px) !important;
+    z-index: 6 !important;
+    overflow: hidden !important;
+  }
+
+  body[data-room="classroom"] #frame-floor img,
+  body[data-room="lab"] #frame-floor img,
+  body[data-room="office"] #frame-floor img,
+  body[data-room="comms"] #frame-floor img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: top !important;
+  }
+
+  /* Dialogue */
+  body[data-room="classroom"] #dialogue,
+  body[data-room="lab"] #dialogue,
+  body[data-room="office"] #dialogue,
+  body[data-room="comms"] #dialogue {
+    position: absolute !important;
+    bottom: clamp(70px, 20vh, 130px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: clamp(250px, 75vw, 450px) !important;
+    padding: clamp(6px, 1.5vw, 12px) !important;
+    font-size: clamp(0.6em, 1.8vw, 1.2em) !important;
+    line-height: 1.2 !important;
+    z-index: 100 !important;
+  }
+
+  /* Dialogue buttons */
+  body[data-room="classroom"] #dialogue-buttons,
+  body[data-room="lab"] #dialogue-buttons,
+  body[data-room="office"] #dialogue-buttons,
+  body[data-room="comms"] #dialogue-buttons {
+    margin-top: 4px !important;
+  }
+
+  body[data-room="classroom"] #dialogue-buttons button,
+  body[data-room="lab"] #dialogue-buttons button,
+  body[data-room="office"] #dialogue-buttons button,
+  body[data-room="comms"] #dialogue-buttons button {
+    font-size: clamp(0.5em, 1.4vw, 0.9em) !important;
+    padding: clamp(3px, 1vw, 8px) clamp(6px, 2vw, 12px) !important;
+    min-height: clamp(24px, 6vw, 40px) !important;
+    min-width: clamp(40px, 12vw, 80px) !important;
+  }
+
+  /* Control button interactions */
+  body[data-room="classroom"] #controls button:hover:not(:active),
+  body[data-room="lab"] #controls button:hover:not(:active),
+  body[data-room="office"] #controls button:hover:not(:active),
+  body[data-room="comms"] #controls button:hover:not(:active) {
+    transform: scale(1.05) !important;
+  }
+
+  body[data-room="classroom"] #controls button:active,
+  body[data-room="lab"] #controls button:active,
+  body[data-room="office"] #controls button:active,
+  body[data-room="comms"] #controls button:active {
+    transform: scale(0.95) translateY(2px) !important;
+  }
+
+  /* Character containers */
+  #marty-container,
+  #tein-container,
+  #lobbie-container,
+  #mater-container {
+    z-index: 4 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Taller landscape phones (>400px height) */
+@media screen and (min-height: 401px) and (max-height: 500px) and (orientation: landscape) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 0.5vh !important;
+    width: clamp(120px, 24vw, 280px) !important;
+  }
+
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 48% !important;
+    width: clamp(200px, 58vw, 580px) !important;
+  }
+
+  body[data-room="classroom"] #marty {
+    width: clamp(57px, 19vw, 136px) !important;
+  }
+
+  body[data-room="lab"] #tein,
+  body[data-room="office"] #lobbie {
+    width: clamp(51px, 16vw, 120px) !important;
+  }
+
+  body[data-room="comms"] #mater {
+    width: clamp(64px, 22vw, 152px) !important;
+  }
+
+  body[data-room="classroom"] #controls button,
+  body[data-room="lab"] #controls button,
+  body[data-room="office"] #controls button,
+  body[data-room="comms"] #controls button {
+    width: clamp(72px, 14.4vw, 104px) !important;
+    height: clamp(72px, 14.4vw, 104px) !important;
+  }
+
+  body[data-room="classroom"] #frame-floor,
+  body[data-room="lab"] #frame-floor,
+  body[data-room="office"] #frame-floor,
+  body[data-room="comms"] #frame-floor {
+    height: clamp(80px, 22vh, 140px) !important;
+  }
+
+  body[data-room="classroom"] #dialogue,
+  body[data-room="lab"] #dialogue,
+  body[data-room="office"] #dialogue,
+  body[data-room="comms"] #dialogue {
+    bottom: clamp(90px, 24vh, 150px) !important;
+    font-size: clamp(0.7em, 2vw, 1.3em) !important;
+  }
+}
+
+/* Very short landscape phones (≤400px height) */
+@media screen and (max-height: 400px) and (orientation: landscape) {
+  body[data-room="classroom"] #classroom-title,
+  body[data-room="lab"] #lab-title,
+  body[data-room="office"] #office-title,
+  body[data-room="comms"] #comms-title {
+    top: 0.1vh !important;
+    width: clamp(100px, 22vw, 240px) !important;
+  }
+
+  body[data-room="classroom"] #classroom-view,
+  body[data-room="lab"] #lab-view,
+  body[data-room="office"] #office-view,
+  body[data-room="comms"] #comms-view {
+    top: 43% !important;
+    width: clamp(160px, 50vw, 450px) !important;
+  }
+
+  body[data-room="classroom"] #marty {
+    width: clamp(45px, 15vw, 105px) !important;
+  }
+
+  body[data-room="lab"] #tein,
+  body[data-room="office"] #lobbie {
+    width: clamp(42px, 12vw, 90px) !important;
+  }
+
+  body[data-room="comms"] #mater {
+    width: clamp(53px, 18vw, 120px) !important;
+  }
+
+  body[data-room="classroom"] #controls button,
+  body[data-room="lab"] #controls button,
+  body[data-room="office"] #controls button,
+  body[data-room="comms"] #controls button {
+    width: clamp(60px, 12vw, 83px) !important;
+    height: clamp(60px, 12vw, 83px) !important;
+  }
+
+  body[data-room="classroom"] #frame-floor,
+  body[data-room="lab"] #frame-floor,
+  body[data-room="office"] #frame-floor,
+  body[data-room="comms"] #frame-floor {
+    height: clamp(50px, 15vh, 90px) !important;
+  }
+
+  body[data-room="classroom"] #dialogue,
+  body[data-room="lab"] #dialogue,
+  body[data-room="office"] #dialogue,
+  body[data-room="comms"] #dialogue {
+    bottom: clamp(60px, 17vh, 100px) !important;
+    font-size: clamp(0.5em, 1.5vw, 0.9em) !important;
+  }
+}

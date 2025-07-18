@@ -1,0 +1,240 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inder's Website - Classroom</title>
+  
+  
+  <style>
+    /* Critical CSS to prevent FOUC */
+    html, body {
+      margin: 0; 
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      height: 100%;
+    }
+    
+    /* Prevent layout shift - set initial container size */
+    #container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 320px;
+      height: 176px;
+      transform-origin: center center;
+      image-rendering: pixelated;
+      background: #000;
+    }
+    
+    /* Initial character positioning to prevent jumping */
+    #marty, #mater, #tein, #lobbie {
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    /* Show characters after GIF loads */
+    #marty.loaded, #mater.loaded, #tein.loaded, #lobbie.loaded {
+      opacity: 1;
+    }
+    
+    /* Prevent dialogue flash */
+    #dialogue.hidden {
+      display: none !important;
+    }
+    
+    /* Smooth image loading */
+    img {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    img.loaded {
+      opacity: 1;
+    }
+  </style>
+  
+  <!-- Preload critical assets -->
+  <link rel="preload" href="style.css" as="style" fetchpriority="high">
+  <link rel="preload" href="sprites/Webpages/classroom.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="sprites/frame/classframe/classframeback.webp" as="image" fetchpriority="high">
+  
+  <!-- Preload all walk-cycle GIFs at high priority -->
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/martywalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/materwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/teinwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/lobbiewalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-room="classroom">
+  <div id="container">
+    <!-- Backdrop Layer -->
+    <div id="frame-back">
+      <img 
+        src="sprites/frame/classframe/classframeback.webp" 
+        alt="Backdrop frame"
+        width="1920" 
+        height="1080"
+        style="width: 100%; height: 100%; object-fit: cover;"
+        onload="this.classList.add('loaded')"
+        onerror="this.style.background='#000'"
+      />
+      <div class="overlay"></div>
+    </div>
+
+    <!-- Title -->
+    <img
+      id="classroom-title"
+      src="sprites/titles/classroomtitle.webp"
+      alt="Classroom Title"
+      width="600"
+      height="150"
+      onload="this.classList.add('loaded')"
+    />
+
+    <!-- Main Viewport -->
+    <div id="classroom-view">
+      <img
+        id="classroom-scene"
+        src="sprites/Webpages/classroom.webp"
+        alt="Classroom scene"
+        width="320"
+        height="176"
+        style="width: 100%; height: 100%;"
+        onload="this.classList.add('loaded')"
+      />
+      <!-- Character with high-priority fetch -->
+      <img
+        id="marty"
+        src="gif/characters/martywalk.gif"
+        alt="Marty walking"
+        width="96"
+        height="96"
+        fetchpriority="high"
+        decoding="async"
+        onload="this.classList.add('loaded')"
+        onerror="this.style.display='none'"
+      />
+      <!-- Interactive Objects -->
+      <img
+        id="bookshelf"
+        class="classroom-object"
+        src="sprites/objects/classroomobjects/bookshelf.webp"
+        alt="Bookshelf"
+        width="62"
+        height="64"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+      <img
+        id="drawer"
+        class="classroom-object"
+        src="sprites/objects/classroomobjects/drawer.webp"
+        alt="Drawer"
+        width="64"
+        height="42"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+    </div>
+
+    <!-- Floor Layer with Controls -->
+    <div id="frame-floor">
+      <img
+        src="sprites/frame/classframe/classframefloor.webp"
+        alt="Floor frame"
+        width="1920"
+        height="400"
+        style="width: 100%; height: auto;"
+        onload="this.classList.add('loaded')"
+      />
+      <div id="controls">
+        <button id="help" aria-label="Help">
+          <img
+            src="sprites/buttons/classroombuttons/classroombuttonshelp.webp"
+            alt="Help button"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="left" aria-label="Previous room">
+          <img
+            src="sprites/buttons/classroombuttons/classroombuttonsleft.webp"
+            alt="Go left"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="right" aria-label="Next room">
+          <img
+            src="sprites/buttons/classroombuttons/classroombuttonsright.webp"
+            alt="Go right"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="volume" aria-label="Toggle sound">
+          <img
+            src="sprites/buttons/classroombuttons/classroombuttonvol.webp"
+            alt="Volume control"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- Dialogue -->
+    <div id="dialogue" class="hidden">
+      <div id="dialogue-text"></div>
+      <div id="dialogue-buttons"></div>
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="bgm" src="sound/bgm.mp3" preload="metadata" loop oncanplay="this.dataset.loaded='true'"></audio>
+  <audio id="marty1" src="sound/marty/marty1.mp3" preload="metadata"></audio>
+  <audio id="marty2" src="sound/marty/marty2.mp3" preload="metadata"></audio>
+  <audio id="marty3" src="sound/marty/marty3.mp3" preload="metadata"></audio>
+  <audio id="martyhappy" src="sound/marty/martyhappy.mp3" preload="metadata"></audio>
+  <audio id="martymad" src="sound/marty/martymad.mp3" preload="metadata"></audio>
+
+  <!-- Scripts -->
+  <script src="scripts/common.js"></script>
+  <script src="scripts/classroom.js"></script>
+</body>
+</html>

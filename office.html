@@ -1,0 +1,296 @@
+<!-- office.html - Optimized -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inder's Website - Office</title>
+  
+  
+  <style>
+    /* Critical Reset & Layout */
+    html, body {
+      margin: 0; 
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      height: 100%;
+    }
+
+    /* Critical Font */
+    @font-face {
+      font-family: 'Pixelpurl';
+      src: 
+        url('/fonts/Pixelpurl-0vBPP.woff2') format('woff2'),
+        url('/fonts/Pixelpurl-0vBPP.woff')  format('woff'),
+        url('/fonts/Pixelpurl-0vBPP.ttf')   format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Critical Container */
+    #container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* Critical Frame Layout */
+    #frame-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #frame-back img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Critical Title */
+    #office-title {
+      position: absolute;
+      top: 2vh;
+      left: 50%;
+      width: clamp(280px, 35vw, 600px);
+      height: auto;
+      transform: translateX(-50%);
+      image-rendering: pixelated;
+      z-index: 4;
+    }
+
+    /* Critical View */
+    #office-view {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      width: clamp(240px, 70vw, 1000px);
+      aspect-ratio: 320 / 176;
+      transform: translate(-50%, -50%);
+      image-rendering: pixelated;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    #office-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* Critical Floor */
+    #frame-floor {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 6;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    #frame-floor img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Critical Hidden State */
+    .hidden {
+      display: none;
+    }
+
+    /* Loading States */
+    img {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    img.loaded {
+      opacity: 1;
+    }
+
+    /* Critical Mobile Landscape */
+    @media screen and (max-height: 500px) and (orientation: landscape) {
+      #office-title {
+        top: 0.5vh !important;
+        width: clamp(120px, 25vw, 280px) !important;
+        animation: none !important;
+      }
+      #office-view {
+        top: 45% !important;
+        width: clamp(180px, 55vw, 550px) !important;
+      }
+    }
+  </style>
+
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Preload all walk-cycle GIFs at high priority -->
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/martywalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/materwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/teinwalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="gif/characters/lobbiewalk.gif"
+    type="image/gif"
+    fetchpriority="high"
+  />
+</head>
+<body data-room="office">
+  <div id="container">
+    <div id="frame-back">
+      <img 
+        src="sprites/frame/fileframe/fileframeback.webp" 
+        alt="Backdrop frame"
+        width="1920"
+        height="1080"
+        onload="this.classList.add('loaded')"
+      />
+      <div class="overlay"></div>
+    </div>
+    <img
+      id="office-title"
+      src="sprites/titles/officetitle.webp"
+      alt="Office Title"
+      width="600"
+      height="120"
+      onload="this.classList.add('loaded')"
+    />
+    <div id="office-view">
+      <img
+        id="office-scene"
+        src="sprites/Webpages/fileroom.webp"
+        alt="Office scene"
+        width="320"
+        height="176"
+        onload="this.classList.add('loaded')"
+      />
+      <!-- Character with high-priority fetch -->
+      <img
+        id="lobbie"
+        src="gif/characters/lobbiewalk.gif"
+        alt="Lobbie walking"
+        width="64"
+        height="64"
+        fetchpriority="high"
+        decoding="async"
+        onload="this.classList.add('loaded')"
+      />
+      <img
+        id="file"
+        class="office-object"
+        src="sprites/objects/fileroomobjects/file.webp"
+        alt="Filing Cabinet"
+        width="83"
+        height="56"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+      <img
+        id="paperstack"
+        class="office-object"
+        src="sprites/objects/fileroomobjects/paperstack.webp"
+        alt="Paper Stack"
+        width="46"
+        height="24"
+        loading="lazy"
+        onload="this.classList.add('loaded')"
+      />
+    </div>
+    <div id="frame-floor">
+      <img 
+        src="sprites/frame/fileframe/fileframefloor.webp" 
+        alt="Floor frame"
+        width="1920"
+        height="130"
+        onload="this.classList.add('loaded')"
+      />
+      <div id="controls">
+        <button id="help" aria-label="Help">
+          <img
+            src="sprites/buttons/officebuttons/officebuttonshelp.webp"
+            alt="Help button"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="left" aria-label="Previous room">
+          <img
+            src="sprites/buttons/officebuttons/officebuttonsleft.webp"
+            alt="Go left"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="right" aria-label="Next room">
+          <img
+            src="sprites/buttons/officebuttons/officebuttonsright.webp"
+            alt="Go right"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+        <button id="volume" aria-label="Toggle sound">
+          <img
+            src="sprites/buttons/officebuttons/officebuttonsvol.webp"
+            alt="Volume control"
+            width="64"
+            height="64"
+            onload="this.classList.add('loaded')"
+          />
+        </button>
+      </div>
+    </div>
+    <div id="dialogue" class="hidden">
+      <div id="dialogue-text"></div>
+      <div id="dialogue-buttons"></div>
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="bgm" src="sound/bgm.mp3" preload="metadata" loop></audio>
+  <audio id="lobbie1" src="sound/lobbie/lobbie1.mp3" preload="metadata"></audio>
+  <audio id="lobbie2" src="sound/lobbie/lobbie2.mp3" preload="metadata"></audio>
+  <audio id="lobbie3" src="sound/lobbie/lobbie3.mp3" preload="metadata"></audio>
+  <audio id="lobbie4" src="sound/lobbie/lobbie4.mp3" preload="metadata"></audio>
+  <audio id="lobbie5" src="sound/lobbie/lobbie5.mp3" preload="metadata"></audio>
+
+  <!-- Scripts -->
+  <script src="scripts/common.js"></script>
+  <script src="scripts/office.js"></script>
+</body>
+</html>
